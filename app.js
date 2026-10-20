@@ -5,9 +5,9 @@ const STORE="goalstats-data-v1", SETTINGS="goalstats-settings-v1", CACHE_DATA="g
 const compNames={BSA:"Brasileirão Série A",PL:"Premier League",CL:"UEFA Champions League",PD:"La Liga",SA:"Serie A",BL1:"Bundesliga",FL1:"Ligue 1"};
 const demo={
   matches:[
-    {competition:"Demonstração",utcDate:"",status:"SCHEDULED",homeTeam:{name:"Atlético-MG"},awayTeam:{name:"Cruzeiro"},score:{fullTime:{home:null,away:null}},demo:true},
-    {competition:"Demonstração",utcDate:"",status:"SCHEDULED",homeTeam:{name:"Flamengo"},awayTeam:{name:"Palmeiras"},score:{fullTime:{home:null,away:null}},demo:true},
-    {competition:"Demonstração",utcDate:"",status:"FINISHED",homeTeam:{name:"Brasil"},awayTeam:{name:"Argentina"},score:{fullTime:{home:2,away:1}},demo:true}
+    {competition:"Dados reais em breve",utcDate:"",status:"SCHEDULED",homeTeam:{name:"Atlético-MG"},awayTeam:{name:"Cruzeiro"},score:{fullTime:{home:null,away:null}},demo:true},
+    {competition:"Dados reais em breve",utcDate:"",status:"SCHEDULED",homeTeam:{name:"Flamengo"},awayTeam:{name:"Palmeiras"},score:{fullTime:{home:null,away:null}},demo:true},
+    {competition:"Dados reais em breve",utcDate:"",status:"FINISHED",homeTeam:{name:"Brasil"},awayTeam:{name:"Argentina"},score:{fullTime:{home:2,away:1}},demo:true}
   ],
   players:[
     {name:"Cadastre uma API",team:"Jogadores reais",position:"Conecte uma fonte",goals:"—",assists:"—",demo:true},
@@ -21,11 +21,11 @@ let db=load(STORE,demo), settings=load(SETTINGS,{token:"",competition:"BSA",refr
 let currentComp="ALL", scorerComp=settings.competition||"BSA", installEvent=null, apiMatches=[], apiPlayers=[];
 function load(key,fallback){try{const v=localStorage.getItem(key);return v?JSON.parse(v):structuredClone(fallback)}catch{return structuredClone(fallback)}}
 function save(){localStorage.setItem(STORE,JSON.stringify(db));renderAll()}
-function saveSettings(){settings={token:$("apiToken").value.trim(),competition:$("defaultComp").value,refresh:$("autoRefresh").value};localStorage.setItem(SETTINGS,JSON.stringify(settings));scorerComp=settings.competition;toast("Configuração salva neste aparelho");}
+function saveSettings(){settings={token:$("apiToken").value.trim(),competition:$("defaultComp").value,refresh:$("autoRefresh").value};localStorage.setItem(SETTINGS,JSON.stringify(settings));scorerComp=settings.competition;toast("Configuração salva neste aparelho"); if(settings.token){setTimeout(()=>fetchMatches(),500);}}
 function toast(s){const el=$("toast");el.textContent=s;el.style.display="block";clearTimeout(toast.t);toast.t=setTimeout(()=>el.style.display="none",2500)}
 function safeUrl(url){try{const u=new URL(url);return ["https:","http:"].includes(u.protocol)?u.href:""}catch{return ""}}
 function escapeHtml(s){return String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]))}
-function dateLabel(s){if(!s)return "Demonstração";const d=new Date(s);return isNaN(d)?s:d.toLocaleString("pt-BR",{day:"2-digit",month:"short",hour:"2-digit",minute:"2-digit"})}
+function dateLabel(s){if(!s)return "Dados reais em breve";const d=new Date(s);return isNaN(d)?s:d.toLocaleString("pt-BR",{day:"2-digit",month:"short",hour:"2-digit",minute:"2-digit"})}
 function scoreLabel(m){const s=m.score?.fullTime||{};return Number.isFinite(s.home)&&Number.isFinite(s.away)?`${s.home} – ${s.away}`:"VS"}
 function isLive(m){return ["LIVE","IN_PLAY","PAUSED","EXTRA_TIME","PENALTY_SHOOTOUT"].includes(m.status)}
 function matchCard(m){
